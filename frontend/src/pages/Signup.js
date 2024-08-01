@@ -32,8 +32,8 @@ function Signup() {
             return handleError('Passwords do not match');
         }
         try {
-            // const url = `http://localhost:8080/auth/signup`;
-            const url = `https://digantauthorization-mern-qsmyadnfw-digant-mishras-projects.vercel.app/auth/signup`;
+            const url = `http://localhost:8080/auth/signup`;
+            // const url = `https://digantauthorization-mern-qsmyadnfw-digant-mishras-projects.vercel.app/auth/signup`;
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
