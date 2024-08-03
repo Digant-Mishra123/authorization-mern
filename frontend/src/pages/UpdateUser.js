@@ -15,6 +15,12 @@ function UpdateUser() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/home');
+            return;
+        }
+
         const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
         if (storedUser) {
             setUpdateInfo(u => ({
@@ -24,7 +30,7 @@ function UpdateUser() {
                 location: storedUser.location || ''
             }));
         }
-    }, []);
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -39,13 +45,13 @@ function UpdateUser() {
         const { newPassword, confirmNewPassword } = updateInfo;
 
         if (newPassword && newPassword !== confirmNewPassword) {
-            return handleError('New passwords do not match');
+            return handleError('Passwords do not match');
         }
 
         try {
             const token = localStorage.getItem('token');
-            const url = `https://authorization-mern-api.vercel.app/auth/update`;
-            // const url = `http://localhost:8080/auth/update`;
+            const url = `http://localhost:8080/auth/update`;
+            // const url = `https://authorization-mern-api.vercel.app/auth/update`;
             const response = await fetch(url, {
                 method: "PUT",
                 headers: {
@@ -54,6 +60,7 @@ function UpdateUser() {
                 },
                 body: JSON.stringify(updateInfo)
             });
+            console.log(response)
             const result = await response.json();
             const { success, message, user, error } = result;
             if (success) {
@@ -69,7 +76,7 @@ function UpdateUser() {
                 handleError(message);
             }
         } catch (err) {
-            handleError(err);
+            handleError("Something Wrong"+err);
         }
     };
 

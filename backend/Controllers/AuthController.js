@@ -67,25 +67,29 @@ const login = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { name, email, location, newPassword } = req.body;
-        const user = await UserModel.findById(req.user._id);
+        const userId = req.user._id;
 
+        const updateData = { name, email, location };
+        if (newPassword) {
+            updateData.password = await bcrypt.hash(newPassword, 10);
+        }
+
+        const user = await UserModel.findByIdAndUpdate(userId, updateData, { new: true });
         if (!user) {
             return res.status(404).json({ message: 'User not found', success: false });
         }
 
-        if (newPassword) {
-            user.password = await bcrypt.hash(newPassword, 10);
-        }
-
-        if (name) user.name = name;
-        if (email) user.email = email;
-        if (location) user.location = location;
-
-        await user.save();
-
-        res.status(200).json({ message: 'Profile updated successfully', success: true, user });
+        res.status(200).json({
+            message: 'User updated successfully',
+            success: true,
+            user
+        });
     } catch (err) {
-        res.status(500).json({ message: 'Internal server error', success: false });
+        console.error(err);
+        res.status(500).json({
+            message: 'Internal server error',
+            success: false
+        });
     }
 };
 module.exports = {
