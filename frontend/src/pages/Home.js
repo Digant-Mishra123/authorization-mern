@@ -24,9 +24,9 @@ function Home() {
             navigate('/login');
         }, 1000);
     };
-
-    const handleUpdateProfile = () => {
-        navigate('/update-profile');
+    
+    const handleUpdate = () => {
+        navigate('/update');
     };
 
     return (
@@ -45,7 +45,7 @@ function Home() {
             </div>
             <div className='button'>
                     <button className="center-button" onClick={handleLogout}>Logout</button>
-                    <button className="center-button" onClick={handleUpdateProfile}>Update</button>
+                    <button className="center-button" onClick={handleUpdate}>Update</button>
                 </div>
             <ToastContainer />
         </div>

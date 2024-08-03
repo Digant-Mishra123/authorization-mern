@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserModel = require("../Models/User");
 
-
 const signup = async (req, res) => {
     try {
         const { name, email,location,password } = req.body;
@@ -27,7 +26,6 @@ const signup = async (req, res) => {
             })
     }
 }
-
 
 const login = async (req, res) => {
     try {
@@ -66,45 +64,32 @@ const login = async (req, res) => {
             })
     }
 }
-
-const updateProfile = async (req, res) => {
-    // Validate request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ error: errors.array() });
-    }
-
+const updateUser = async (req, res) => {
     try {
-        // Extract data from the request
-        const { name, email, location } = req.body;
-        const userId = req.user.id; // Ensure this is set in your authentication middleware
+        const { name, email, location, newPassword } = req.body;
+        const user = await UserModel.findById(req.user._id);
 
-        // Update the user profile
-        const updatedUser = await User.findByIdAndUpdate(
-            userId, // Find user by ID
-            { name, email, location }, // Update user fields
-            { new: true } // Return the updated document
-        );
-
-        // Check if user was found and updated
-        if (!updatedUser) {
-            return res.status(404).json({ error: 'User not found' });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found', success: false });
         }
 
-        // Respond with updated user data or success message
-        res.json({
-            success: true,
-            message: 'Profile updated successfully',
-            user: updatedUser
-        });
+        if (newPassword) {
+            user.password = await bcrypt.hash(newPassword, 10);
+        }
+
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (location) user.location = location;
+
+        await user.save();
+
+        res.status(200).json({ message: 'Profile updated successfully', success: true, user });
     } catch (err) {
-        console.error(err); // Log the error for debugging
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Internal server error', success: false });
     }
 };
-
 module.exports = {
     signup,
     login,
-    updateProfile
+    updateUser
 }
