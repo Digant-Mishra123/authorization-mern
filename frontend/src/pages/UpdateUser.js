@@ -50,8 +50,8 @@ function UpdateUser() {
 
         try {
             const token = localStorage.getItem('token');
-            const url = `http://localhost:8080/auth/update`;
-            // const url = `https://authorization-mern-api.vercel.app/auth/update`;
+            // const url = `http://localhost:8080/auth/update`;
+            const url = `https://authorization-mern-app.vercel.app/auth/update`;
             const response = await fetch(url, {
                 method: "PUT",
                 headers: {
